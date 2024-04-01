@@ -1,8 +1,9 @@
-import { StyleSheet, Text, View, Button, FlatList } from 'react-native';
-import { API_KEY } from './exports';
+import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
+import { API_KEY, MEASUREMENT_KEYS } from './exports';
+import DataList from './DataList';
 import { useState } from 'react';
 
-const TypesListButton = ({location, radius, type}) => {
+const TypesListButton = ({location, radius, type, measurement}) => {
 
   // State for api request data.
   const [data, setData] = useState(null);
@@ -15,9 +16,36 @@ const TypesListButton = ({location, radius, type}) => {
 
   // Set used to get specific key value pairs.
   const dataKeySet = new Set([
-    "name", "price_level", "rating",
-    "website", "vicinity"
+    "name", "price_level", "rating", 
+    "vicinity", "geometry"
   ]);
+
+  // Helper function for getDistance and Haversine Formula.
+  const toRadians = (degrees) => {
+    return degrees * (Math.PI / 180);
+  }
+
+  // Get the distance from user lat and long to place lat and long.
+  const getDistance = (data) => {
+    const lat1 = toRadians(parseFloat(location.latitude));
+    const long1 = toRadians(parseFloat(location.longitude));
+
+    for (let i = 0; i < data.length; i++) {
+      const lat2 = toRadians(data[i]["geometry"]["location"]["lat"]);
+      const long2 = toRadians(data[i]["geometry"]["location"]["lng"]);
+
+      // Haversine Formula.
+      const distance = (
+        Math.acos(Math.sin(lat1)*Math.sin(lat2)+
+        Math.cos(lat1)*Math.cos(lat2)*Math.cos(long2-long1))*
+        MEASUREMENT_KEYS[measurement][2]
+      ).toFixed(2);
+
+      // Add the distance to data.
+      delete data[i]["geometry"];
+      data[i]["distance"] = distance;
+    }
+  }
 
   // Get only the needed key value pairs for each object.
   const formatData = (data) => {
@@ -32,6 +60,8 @@ const TypesListButton = ({location, radius, type}) => {
       }
       newData.push(newObj);
     }
+
+    getDistance(newData);
 
     return newData;
   }
@@ -78,16 +108,32 @@ const TypesListButton = ({location, radius, type}) => {
   // Error message if request is not successful.
   // If data.results is empty, display no results.
   return (
-    <View>
-      <Button 
-        onPress={() => nearbySearch(location, radius, type)}
-        title={type.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-      />
+    <View style={styles.container}>
+      <TouchableOpacity style={styles.button} onPress={() => nearbySearch(location, radius, type)} >
+        <Text style={styles.text}>{type.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</Text>
+      </TouchableOpacity>
       {loading ? <Text>Loading</Text> : ""}
       {errorMsg ? <Text>{errorMsg}</Text> : ""}
-      {data ? <Text>{JSON.stringify(data)}</Text>: ""}
+      {data ? <DataList data={data}/>: ""}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    
+  },
+  text: {
+    fontSize: 24,
+    textAlign: "center",
+  },
+  button: {
+    borderWidth: 2,
+    borderRadius: 10,
+    padding: 5,
+    margin: 5
+  }
+});
+
 
 export default TypesListButton;
