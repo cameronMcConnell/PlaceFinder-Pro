@@ -2,7 +2,8 @@ import { StyleSheet, Text, View, FlatList } from 'react-native';
 import { TYPES_NAME_OBJECTS } from './exports';
 import TypesListButton from './TypesListButton';
 
-const TypesList = ({location, radius, errorMsg, measurement}) => {
+const TypesList = ({coordinates, radius, errorMsg, measurement}) => {
+  
   // Render error page for not enabling location services.
   // For the main page.
   if (errorMsg) {
@@ -10,7 +11,6 @@ const TypesList = ({location, radius, errorMsg, measurement}) => {
     
     return (
       <View style={styles.container}>
-        <StatusBar style="auto" />
         <Text>{errorMsg}</Text>
       </View>
     );
@@ -23,7 +23,7 @@ const TypesList = ({location, radius, errorMsg, measurement}) => {
         data={TYPES_NAME_OBJECTS}
         renderItem={({item}) => (
           <TypesListButton key={item.type}
-            location={location}
+            coordinates={coordinates}
             radius={radius}
             type={item.type}
             measurement={measurement}

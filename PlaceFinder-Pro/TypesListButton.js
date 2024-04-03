@@ -3,7 +3,7 @@ import { API_KEY, MEASUREMENT_KEYS } from './exports';
 import DataList from './DataList';
 import { useState } from 'react';
 
-const TypesListButton = ({location, radius, type, measurement}) => {
+const TypesListButton = ({coordinates, radius, type, measurement}) => {
 
   // State for api request data.
   const [data, setData] = useState(null);
@@ -16,7 +16,7 @@ const TypesListButton = ({location, radius, type, measurement}) => {
 
   // Set used to get specific key value pairs.
   const dataKeySet = new Set([
-    "name", "price_level", "rating", 
+    "name", "rating", 
     "vicinity", "geometry"
   ]);
 
@@ -27,8 +27,8 @@ const TypesListButton = ({location, radius, type, measurement}) => {
 
   // Get the distance from user lat and long to place lat and long.
   const getDistance = (data) => {
-    const lat1 = toRadians(parseFloat(location.latitude));
-    const long1 = toRadians(parseFloat(location.longitude));
+    const lat1 = toRadians(parseFloat(coordinates.latitude));
+    const long1 = toRadians(parseFloat(coordinates.longitude));
 
     for (let i = 0; i < data.length; i++) {
       const lat2 = toRadians(data[i]["geometry"]["location"]["lat"]);
@@ -41,7 +41,13 @@ const TypesListButton = ({location, radius, type, measurement}) => {
         MEASUREMENT_KEYS[measurement][2]
       ).toFixed(2);
 
-      // Add the distance to data.
+      // Add the distance to data
+      data[i]["vicinity"] = {
+        address: data[i]["vicinity"], 
+        lat: data[i]["geometry"]["location"]["lat"],
+        lng: data[i]["geometry"]["location"]["lng"]
+      };
+
       delete data[i]["geometry"];
       data[i]["distance"] = distance;
     }
@@ -61,13 +67,15 @@ const TypesListButton = ({location, radius, type, measurement}) => {
       newData.push(newObj);
     }
 
+    // Get distance and sort data by it.
     getDistance(newData);
+    newData.sort((a, b) => a.distance - b.distance);
 
     return newData;
   }
 
   // Performs nearby search api call.
-  const nearbySearch = async (location, radius, type) => {
+  const nearbySearch = async (coordinates, radius, type) => {
     // Hack to close the menu on second button press.
     if (data !== null) {
       setData(null);
@@ -79,7 +87,7 @@ const TypesListButton = ({location, radius, type, measurement}) => {
 
     // Format url.
     const url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
-    const params = `?location=${location.latitude}%2C${location.longitude}&radius=${radius}&type=${type}&key=${API_KEY}`;
+    const params = `?location=${coordinates.latitude}%2C${coordinates.longitude}&radius=${radius}&type=${type}&key=${API_KEY}`;
     
     let responseJson;
 
@@ -109,12 +117,12 @@ const TypesListButton = ({location, radius, type, measurement}) => {
   // If data.results is empty, display no results.
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={() => nearbySearch(location, radius, type)} >
+      <TouchableOpacity style={styles.button} onPress={() => nearbySearch(coordinates, radius, type)} >
         <Text style={styles.text}>{type.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</Text>
       </TouchableOpacity>
       {loading ? <Text>Loading</Text> : ""}
       {errorMsg ? <Text>{errorMsg}</Text> : ""}
-      {data ? <DataList data={data}/>: ""}
+      {data ? <DataList data={data} measurement={measurement} />: ""}
     </View>
   );
 }

@@ -15,11 +15,13 @@ const Header = ({settings, setSettings, radius, measurement}) => {
       <Text style={styles.text}>PlaceFinder-Pro</Text>
       <View style={styles.flex}>
         <View style={styles.center}>
-          <Text style={styles.bold_underline}>Range:</Text>
+          <Text style={[styles.bold, styles.underline]}>
+            {measurement[0].toUpperCase() + measurement.slice(1)}
+          </Text>
         </View>
         <View style={styles.center}>
           <Text style={styles.bold}>
-            {(radius * MEASUREMENT_KEYS[measurement][1]).toFixed(2)} {measurement}
+            {(radius * MEASUREMENT_KEYS[measurement][1]).toFixed(2)}
           </Text>
         </View>
       </View>
@@ -39,7 +41,7 @@ const styles = StyleSheet.create({
   button: {
     flex: 2,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   text: {
     fontSize: 32,
@@ -62,10 +64,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
   },
-  bold_underline: {
-    textAlign: "center",
-    fontWeight: "bold",
-    color: "white",
+  underline: {
     textDecorationLine: "underline"
   }
 });
