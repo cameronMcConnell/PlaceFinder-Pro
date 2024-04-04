@@ -1,11 +1,12 @@
 import { StyleSheet, SafeAreaView, Alert } from 'react-native';
-import { API_KEY, STORAGE_KEY } from './exports';
 import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
 import * as Location from 'expo-location';
+import { STORAGE_KEY } from './exports';
 import TypesList from './TypesList';
 import Settings from './Settings';
 import storage from './storage';
+import { API_KEY } from './api';
 import Header from './Header';
 
 export default function App() {
@@ -86,7 +87,6 @@ export default function App() {
       }
       catch (err) 
       {
-        // Implement some error handling here.
         Alert.alert("Error Occurred While Getting User Location", err.name);
       }  
     })();
@@ -94,15 +94,17 @@ export default function App() {
 
   // Header and Settings or TypeList components.
   return (
-    <SafeAreaView style={[styles.container, {backgroundColor: bgColor}]}>
+    <SafeAreaView style={[styles.flex, {backgroundColor: bgColor}]}>
       <StatusBar style="light" />
-      <Header settings={settings}
+      <Header 
+        settings={settings}
         setSettings={setSettings}
         radius={radius}
         measurement={measurement}
       />
       {settings ?  
-        <Settings location={location}
+        <Settings 
+          location={location}
           radius={radius}
           setRadius={setRadius}
           measurement={measurement}
@@ -111,7 +113,8 @@ export default function App() {
           setBgColor={setBgColor}
         />
         :
-        <TypesList coordinates={coordinates}
+        <TypesList 
+          coordinates={coordinates}
           radius={radius}
           errorMsg={errorMsg}
           measurement={measurement}
@@ -121,7 +124,7 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  flex: {
     flex: 1
-  },
+  }
 });

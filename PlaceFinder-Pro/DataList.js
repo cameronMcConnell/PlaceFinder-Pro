@@ -55,7 +55,8 @@ const DataList = ({data, measurement}) => {
               ))}
             </View>
           )}
-        /> :
+        /> 
+        :
         <View style={styles.center}>
           <Text style={styles.text}>No nearby locations.</Text>
         </View>

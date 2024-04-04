@@ -1,7 +1,8 @@
 import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { API_KEY, MEASUREMENT_KEYS } from './exports';
+import { MEASUREMENT_KEYS } from './exports';
 import DataList from './DataList';
 import { useState } from 'react';
+import { API_KEY } from './api';
 
 const TypesListButton = ({coordinates, radius, type, measurement}) => {
 
@@ -125,8 +126,15 @@ const TypesListButton = ({coordinates, radius, type, measurement}) => {
           <ActivityIndicator /> 
         </View>
         : ""}
-      {errorMsg ? <Text>{errorMsg}</Text> : ""}
-      {data ? <DataList data={data} measurement={measurement} />: ""}
+      {errorMsg ?
+        <View style={styles.center}> 
+          <Text>{errorMsg}</Text>
+        </View> : ""}
+      {data ? 
+        <DataList 
+          data={data} 
+          measurement={measurement} 
+        />: ""}
     </View>
   );
 }
