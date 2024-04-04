@@ -36,8 +36,6 @@ git clone https://github.com/cameronMcConnell/PlaceFinder-Pro.git
 npm install
 ```
 
-or
-
 ```bash
 yarn install
 ```
@@ -56,7 +54,7 @@ npx expo start
 
 ## Demo Video
 
-[![Demo Video](demo_thumbnail.png)](https://www.example.com)
+https://github.com/cameronMcConnell/PlaceFinder-Pro/assets/93450810/e01ada3d-808b-4dd0-b694-35a84f488130
 
 ## Dependencies
 
