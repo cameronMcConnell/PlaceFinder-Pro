@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, Linking, Platform } from 'react-native';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Linking, Platform, Alert } from 'react-native';
 import { Rating } from "react-native-ratings";
 
 const DataList = ({data, measurement}) => {
@@ -7,14 +7,14 @@ const DataList = ({data, measurement}) => {
   const openMap = (lat, lng, address) => {
     const scheme = Platform.select({ ios: 'maps://0,0?q=', android: 'geo:0,0?q=' });
     const latLng = `${lat},${lng}`;
-    const label = address;
     const url = Platform.select({
-      ios: `${scheme}${label}@${latLng}`,
-      android: `${scheme}${latLng}(${label})`
+      ios: `${scheme}${address}@${latLng}`,
+      android: `${scheme}${latLng}(${address})`
     });
-    
-        
-    Linking.openURL(url);
+          
+    Linking.openURL(url).catch((err) => {
+      Alert.alert("Error opening link", err);
+    });
   }
   
   // Choose correct element to display based on key value.
@@ -24,8 +24,8 @@ const DataList = ({data, measurement}) => {
         return <Text style={[styles.text, styles.bold]} key={key+value}>{value}</Text>
       case "vicinity":
         return (
-          <TouchableOpacity style={styles.text} key={key+value} onPress={() => openMap(value.lat, value.lng, value.address)}>
-            <Text style={styles.text}>{value.address}</Text>
+          <TouchableOpacity key={key+value} onPress={() => openMap(value.lat, value.lng, value.address)}>
+            <Text style={[styles.text, styles.url]}>{value.address}</Text>
           </TouchableOpacity>
         );
       case "distance":
@@ -45,17 +45,21 @@ const DataList = ({data, measurement}) => {
 
   return (
     <View style={styles.container}>
-      {data ?
-      <FlatList 
-        data={data}
-        renderItem={({item}) => (
-          <View style={styles.border} key={item.vicinity}>
-            {Object.entries(item).map(([key, value]) => (
-              getElement(key, value)
-            ))}
-          </View>
-        )}
-      /> : <Text>No loaded data :(</Text>}
+      {data.length ?
+        <FlatList 
+          data={data}
+          renderItem={({item}) => (
+            <View style={styles.border} key={item.vicinity}>
+              {Object.entries(item).map(([key, value]) => (
+                getElement(key, value)
+              ))}
+            </View>
+          )}
+        /> :
+        <View style={styles.center}>
+          <Text style={styles.text}>No nearby locations.</Text>
+        </View>
+      }
     </View>
   );
 }
@@ -79,6 +83,16 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row"
+  },
+  url: {
+    color: "rgb(10,132,255)",
+    textDecorationLine: "underline"
+  },
+  center: {
+    padding: 5,
+    margin: 5,
+    justifyContent: "center",
+    alignItems: "center"
   }
 });
 

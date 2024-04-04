@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { API_KEY, MEASUREMENT_KEYS } from './exports';
 import DataList from './DataList';
 import { useState } from 'react';
@@ -120,7 +120,11 @@ const TypesListButton = ({coordinates, radius, type, measurement}) => {
       <TouchableOpacity style={styles.button} onPress={() => nearbySearch(coordinates, radius, type)} >
         <Text style={styles.text}>{type.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</Text>
       </TouchableOpacity>
-      {loading ? <Text>Loading</Text> : ""}
+      {loading ? 
+        <View style={styles.center}>
+          <ActivityIndicator /> 
+        </View>
+        : ""}
       {errorMsg ? <Text>{errorMsg}</Text> : ""}
       {data ? <DataList data={data} measurement={measurement} />: ""}
     </View>
@@ -129,7 +133,13 @@ const TypesListButton = ({coordinates, radius, type, measurement}) => {
 
 const styles = StyleSheet.create({
   container: {
-    
+    flex: 1
+  },
+  center: {
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 5,
+    padding: 5
   },
   text: {
     fontSize: 24,

@@ -2,13 +2,13 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { MEASUREMENT_KEYS } from './exports';
 
-const Header = ({settings, setSettings, radius, measurement}) => {
+const Header = ({settings, setSettings, radius, measurement, bgColor}) => {
   const changeSettings = () => {
     setSettings((prevSettings) => !prevSettings)
   }
 
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, {backgroundColor: bgColor}]}>
       <TouchableOpacity style={styles.button} onPress={() => changeSettings()}>
         <FontAwesome name={settings ? "arrow-left": "gear"} size={24} color="white"/>
       </TouchableOpacity>
@@ -16,7 +16,7 @@ const Header = ({settings, setSettings, radius, measurement}) => {
       <View style={styles.flex}>
         <View style={styles.center}>
           <Text style={[styles.bold, styles.underline]}>
-            {measurement[0].toUpperCase() + measurement.slice(1)}
+            {measurement[0].toUpperCase() + measurement.slice(1)}:
           </Text>
         </View>
         <View style={styles.center}>

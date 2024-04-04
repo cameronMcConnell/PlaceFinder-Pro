@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList } from 'react-native';
+import { StyleSheet, View, FlatList, Alert, ActivityIndicator } from 'react-native';
 import { TYPES_NAME_OBJECTS } from './exports';
 import TypesListButton from './TypesListButton';
 
@@ -10,8 +10,8 @@ const TypesList = ({coordinates, radius, errorMsg, measurement}) => {
     Alert.alert('Enable Location Services', errorMsg);
     
     return (
-      <View style={styles.container}>
-        <Text>{errorMsg}</Text>
+      <View style={styles.center}>
+        <ActivityIndicator size="large"/>
       </View>
     );
   }
@@ -40,6 +40,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     flex: 1
   },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff"
+  }
 });
 
 export default TypesList;

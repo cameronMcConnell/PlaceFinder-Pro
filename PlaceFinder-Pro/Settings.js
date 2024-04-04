@@ -1,9 +1,9 @@
-import { StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Alert } from 'react-native';
 import { Slider } from '@miblanchard/react-native-slider';
 import { MEASUREMENT_KEYS, STORAGE_KEY } from './exports';
 import storage from "./storage";
 
-const Settings = ({location, radius, setRadius, measurement, setMeasurement}) => {
+const Settings = ({location, radius, setRadius, measurement, setMeasurement, bgColor, setBgColor}) => {
   const pageHeight = Dimensions.get("window").height;
 
   // Uses storage to save data to local cache.
@@ -17,7 +17,7 @@ const Settings = ({location, radius, setRadius, measurement, setMeasurement}) =>
       expires: null
     })
     .catch((err) => {
-      console.log(err);
+      Alert.alert("Error Occurred While Saving", err.name);
     })
   } 
   
@@ -50,10 +50,27 @@ const Settings = ({location, radius, setRadius, measurement, setMeasurement}) =>
         </View>
       </View>
       <View style={styles.container}>
+        <Text style={[styles.text, styles.bold]}>Background Color:</Text>
+        <View style={styles.row}>
+          <TouchableOpacity style={[styles.button, bgColor === "#3b74ba" ? styles.highlight: ""]} onPress={() => setBgColor("#3b74ba")}>
+            <Text>Blue</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.button, bgColor === "#f0609e" ? styles.highlight: ""]} onPress={() => setBgColor("#f0609e")}>
+            <Text>Pink</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.button, bgColor === "#f04e32" ? styles.highlight: ""]} onPress={() => setBgColor("#f04e32")}>
+            <Text>Orange</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.button, bgColor === "#fbad18" ? styles.highlight: ""]} onPress={() => setBgColor("#fbad18")}>
+            <Text>Yellow</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View style={styles.container}>
         <Text style={[styles.text, styles.bold]}>Save Settings:</Text>
         <View style={styles.row}>
-          <TouchableOpacity style={styles.button} onPress={() => saveSettings({radius: radius, measurement: measurement})}>
-            <Text>Save</Text>
+          <TouchableOpacity style={[styles.button, styles.borderHighlight]} onPress={() => saveSettings({radius, measurement, bgColor})}>
+            <Text style={styles.link}>Save</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -93,6 +110,12 @@ const styles = StyleSheet.create({
   },
   highlight: {
     backgroundColor: "rgba(236, 236, 236, 1)"
+  },
+  borderHighlight: {
+    borderColor: "rgb(10,132,255)"
+  },
+  link: {
+    color: "rgb(10,132,255)"
   }
 })
 
